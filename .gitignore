@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Gradle / Java
+.gradle/
+**/.gradle/**
+build/
+target/
+
+# Node
+node_modules/
+dist/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Serverless/SAM
+.serverless/
+.aws-sam/
