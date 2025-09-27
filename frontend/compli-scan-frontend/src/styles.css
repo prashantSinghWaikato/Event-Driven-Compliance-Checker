@@ -1,0 +1,635 @@
+/* =========================
+   Theme tokens
+   ========================= */
+:root {
+    --bg: #0b1220;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --card: #111827;
+    --border: #374151;
+    --primary: #6366f1;
+    --focus: rgba(99, 102, 241, .35);
+}
+
+/* =========================
+   Base reset
+   ========================= */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Utility */
+.center {
+    text-align: center;
+}
+
+/* =========================
+   Login page
+   ========================= */
+.login-page {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Left intro (hidden on small) */
+.login-left {
+    display: none;
+    flex: 1;
+    padding: 64px 48px;
+    color: #fff;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777);
+}
+
+@media (min-width: 768px) {
+    .login-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
+.login-left h1 {
+    font-size: 40px;
+    line-height: 1.1;
+    margin: 0 0 16px 0;
+    font-weight: 900;
+}
+
+.login-left p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 10px 0;
+}
+
+/* Right login panel */
+.login-right {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, .25);
+}
+
+.login-card h2 {
+    margin: 0 0 16px;
+    text-align: center;
+    font-weight: 700;
+}
+
+/* Login form */
+.login-form {
+    display: grid;
+    gap: 14px;
+}
+
+.field {
+    display: grid;
+    gap: 6px;
+}
+
+.label {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #0f172a;
+    border: 1px solid var(--border);
+    color: var(--text);
+    outline: none;
+}
+
+.input::placeholder {
+    color: #6b7280;
+}
+
+.input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--focus);
+}
+
+/* Messages */
+.error {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #fca5a5;
+}
+
+.help {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+@media (max-width: 359px) {
+    .login-card {
+        padding: 16px;
+        border-radius: 12px;
+    }
+}
+
+/* =========================
+   Buttons (Logout not full-width)
+   ========================= */
+.btn-primary {
+    width: auto;
+    /* inline by default */
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: none;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .15s ease, transform .02s ease;
+}
+
+.btn-primary:hover {
+    filter: brightness(.96);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+/* Only full-width in login form/cards */
+.login-form .btn-primary,
+.login-card .btn-primary {
+    width: 100%;
+    display: block;
+}
+
+/* Header-sized variant */
+.topbar .btn-primary {
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+/* Optional danger variant */
+.btn-danger {
+    background: #ef4444;
+}
+
+.btn-danger:hover {
+    filter: brightness(.95);
+}
+
+/* =========================
+   App shell
+   ========================= */
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main {
+    flex: 1 0 auto;
+    /* fills the space above the footer */
+    max-width: 1180px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 26px 16px 56px;
+}
+
+.footer {
+    margin-top: auto;
+    /* pushes footer to bottom on short pages */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* center the “2025 CompliScan” text */
+    height: 56px;
+    /* consistent size on all pages */
+    padding: 0 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    background: transparent;
+    /* or var(--bg) if you prefer */
+    text-align: center;
+    /* fallback */
+}
+
+/* =========================
+   Top bar / navigation
+   ========================= */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: #0d1426;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.menu {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.menu a {
+    color: #a3b2d1;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 10px;
+}
+
+.menu a:hover,
+.menu a.active {
+    color: var(--text);
+    background: rgba(255, 255, 255, .06);
+}
+
+/* =========================
+   User dropdown (details/summary)
+   ========================= */
+.user {
+    position: relative;
+    display: inline-block;
+}
+
+/* Make summary look like a pill button */
+.user summary.user-btn {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 999px;
+}
+
+.user summary::-webkit-details-marker {
+    display: none;
+}
+
+.user summary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus);
+}
+
+/* Optional avatar + name/email inside the summary */
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.user-id {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.user-name {
+    font-size: 14px;
+}
+
+.user-email {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* The dropdown panel */
+.user-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 220px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, .3);
+    padding: 6px;
+    display: none;
+    /* hidden by default */
+    z-index: 1000;
+    /* above sticky header */
+}
+
+/* Show when <details class="user" open> */
+.user[open] .user-menu {
+    display: block;
+}
+
+.user-menu-header {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.user-menu-item {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    text-align: left;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.user-menu-item:hover {
+    background: rgba(255, 255, 255, .06);
+}
+
+.user-menu-item.logout,
+.user-menu-item.danger {
+    color: #fca5a5;
+}
+
+.user-menu-item.logout:hover,
+.user-menu-item.danger:hover {
+    background: rgba(239, 68, 68, .12);
+    color: #fecaca;
+}
+
+/* =========================
+   Page head / badges
+   ========================= */
+.page-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 6px;
+}
+
+.subtle {
+    color: var(--muted);
+    margin: 0 0 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    display: inline-block;
+}
+
+/* =========================
+   Cards & KPI
+   ========================= */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.card.danger {
+    border-color: #7f1d1d;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, .15) inset;
+}
+
+.kpi-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 980px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 540px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.kpi-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.kpi-value {
+    font-size: 26px;
+    font-weight: 800;
+}
+
+/* =========================
+   Sections / layout
+   ========================= */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 980px) {
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.section-title {
+    font-weight: 700;
+    margin: 4px 0 10px;
+}
+
+/* =========================
+   Legend
+   ========================= */
+.legend {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin: 6px 0 10px;
+}
+
+.swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.swatch.high {
+    background: #ef4444;
+}
+
+.swatch.medium {
+    background: #f59e0b;
+}
+
+.swatch.low {
+    background: #10b981;
+}
+
+/* =========================
+   Charts (SVG shells)
+   ========================= */
+.chart {
+    height: 280px;
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.chart svg {
+    width: 100%;
+    height: 100%;
+}
+
+.grid-line {
+    stroke: #1f2937;
+    stroke-width: 1;
+    stroke-dasharray: 4 6;
+}
+
+/* =========================
+   Tables
+   ========================= */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    font-size: 14px;
+}
+
+.table th {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+/* =========================
+   Links / small actions
+   ========================= */
+.card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.link-btn {
+    color: #93c5fd;
+    text-decoration: underline;
+    font-size: 14px;
+}
+
+.link-btn:hover {
+    filter: brightness(.95);
+}
+
+/* =========================
+   Alerts
+   ========================= */
+.alert {
+    padding: 8px 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.alert-danger {
+    background: rgba(239, 68, 68, .1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, .25);
+}
+
+/* make job ids readable and prevent clipping */
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.break-on-small {
+    max-width: 520px;
+}
+
+@media (max-width: 800px) {
+    .break-on-small {
+        white-space: normal;
+        word-break: break-all;
+    }
+}
+
+/* nicer link colors just for these two links */
+.link-job {
+    color: #93c5fd;
+    text-decoration: underline;
+}
+
+.link-job:hover {
+    color: #bfdbfe;
+}
+
+.link-view {
+    color: #a78bfa;
+    text-decoration: underline;
+}
+
+.link-view:hover {
+    color: #ddd6fe;
+}

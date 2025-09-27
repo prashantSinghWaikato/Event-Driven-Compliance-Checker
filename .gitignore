@@ -1,11 +1,14 @@
-# macOS
-.DS_Store
+# Maven
+target/
 
-# Gradle / Java
+# Gradle
 .gradle/
 **/.gradle/**
 build/
-target/
+
+# Java/IDE
+*.iml
+.idea/
 
 # Node
 node_modules/
@@ -20,3 +23,6 @@ __pycache__/
 # Serverless/SAM
 .serverless/
 .aws-sam/
+
+# macOS
+.DS_Store

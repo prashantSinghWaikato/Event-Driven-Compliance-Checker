@@ -1,0 +1,58 @@
+server:
+  port: 8080
+
+app:
+  aws:
+    region: ${AWS_REGION:us-east-1}
+    s3Bucket: ${S3_BUCKET:compliscan-dev-uploads}
+    presignMinutes: ${PRESIGN_MINUTES:10}
+    sqsQueueUrl: ${SQS_QUEUE_URL:} # set this in prod
+    ddbTable: ${DDB_TABLE:ComplianceResults}
+    jobsTable: ${JOBS_TABLE:ComplianceJobs}
+    usersTable: ${USERS_TABLE:ComplianceUsers}
+
+  security:
+    signupRoles: ADMIN,ANALYST,UPLOADER,VIEWER
+    # 🔐 multi-user, multi-role
+    users:
+      - username: prashant
+        name: Prashant
+        email: prashant@admin.com
+        password: password # dev-only; prefer passwordBcrypt in prod
+        # passwordBcrypt: ${ADMIN_PW_BCRYPT:}
+        roles: [ADMIN, ANALYST, UPLOADER, VIEWER]
+
+      - username: kunal
+        name: Kunal
+        email: kunal@analyst.com
+        password: password
+        roles: [ANALYST, VIEWER]
+
+      - username: aaditya
+        name: Aaditya
+        email: aaditya@uploader.com
+        password: password
+        roles: [UPLOADER]
+
+    # JWT
+    jwtSecret: ${JWT_SECRET:dev-secret-change-me-at-least-32-bytes-long________}
+    jwtTtlMinutes: ${JWT_TTL_MINUTES:1440}
+    allowedOrigins: ${ALLOWED_ORIGINS:http://localhost:5173}
+
+# External reference data (OFAC/PEP)
+refdata:
+  ofacSdnUrl: ${OFAC_SDN_URL:https://www.treasury.gov/ofac/downloads/sdn.csv}
+  ofacConsolidatedUrl: ${OFAC_CONSOLIDATED_URL:https://www.treasury.gov/ofac/downloads/consolidated/consolidated.csv}
+  pepCsvUrl: ${PEP_CSV_URL:https://data.opensanctions.org/datasets/peps/latest/peps.csv}
+  refreshCron: ${REFDATA_REFRESH_CRON:0 30 3 * * *}
+
+spring:
+  mvc:
+    problemdetails:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
