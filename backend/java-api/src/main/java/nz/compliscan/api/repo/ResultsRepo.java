@@ -1,3 +1,4 @@
+// src/main/java/nz/compliscan/api/repo/ResultsRepo.java
 package nz.compliscan.api.repo;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -24,6 +25,32 @@ public class ResultsRepo {
         this.table = table;
     }
 
+    // ---------- NEW: write a single result row ----------
+    public void putOne(String jobId,
+            String recordId,
+            String name,
+            String country,
+            String matchName,
+            int riskScore,
+            String processedAt,
+            String owner) {
+        Map<String, AttributeValue> item = new HashMap<>();
+        item.put("jobId", AttributeValue.builder().s(jobId).build());
+        item.put("recordId", AttributeValue.builder().s(recordId).build());
+        item.put("name", AttributeValue.builder().s(name).build());
+        if (country != null)
+            item.put("country", AttributeValue.builder().s(country).build());
+        if (matchName != null)
+            item.put("matchName", AttributeValue.builder().s(matchName).build());
+        item.put("riskScore", AttributeValue.builder().n(Integer.toString(riskScore)).build());
+        item.put("processedAt", AttributeValue.builder().s(processedAt).build());
+        if (owner != null)
+            item.put("owner", AttributeValue.builder().s(owner).build());
+
+        ddb.putItem(PutItemRequest.builder().tableName(table).item(item).build());
+    }
+
+    // ---------- existing paging/list ----------
     public static class Page {
         public List<ResultItem> items;
         public String lastKey; // opaque cursor
@@ -77,7 +104,6 @@ public class ResultsRepo {
     // ----- cursor helpers (JSON -> base64url) -----
     private static String encodeKey(Map<String, AttributeValue> key) {
         try {
-            // Reduce AttributeValue to { "K": {"S":"..."} } or {"N":"..."}
             Map<String, Map<String, String>> out = new LinkedHashMap<>();
             key.forEach((k, v) -> {
                 Map<String, String> val = new LinkedHashMap<>();
@@ -98,7 +124,7 @@ public class ResultsRepo {
         try {
             String json = new String(Base64.getUrlDecoder().decode(cursor), StandardCharsets.UTF_8);
             Map<String, Map<String, String>> raw = MAPPER.readValue(json,
-                    new TypeReference<Map<String, Map<String, String>>>() {
+                    new com.fasterxml.jackson.core.type.TypeReference<Map<String, Map<String, String>>>() {
                     });
             Map<String, AttributeValue> key = new LinkedHashMap<>();
             raw.forEach((k, v) -> {

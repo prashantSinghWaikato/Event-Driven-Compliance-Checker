@@ -1,3 +1,4 @@
+// src/main/java/nz/compliscan/api/repo/JobsRepo.java
 package nz.compliscan.api.repo;
 
 import nz.compliscan.api.model.JobItem;
@@ -35,9 +36,6 @@ public class JobsRepo {
         item.put("status", AttributeValue.builder().s(JobStatus.QUEUED.name()).build());
         item.put("createdAt", AttributeValue.builder().s(now).build());
         item.put("updatedAt", AttributeValue.builder().s(now).build());
-
-        // Generic GSI to query "recent jobs for owner"
-        // Single index "gsi1": PK=gsi1pk, SK=gsi1sk
         item.put("gsi1pk", AttributeValue.builder().s("OWNER#" + owner).build());
         item.put("gsi1sk", AttributeValue.builder().s(now).build());
 
@@ -46,6 +44,29 @@ public class JobsRepo {
                 .item(item)
                 .conditionExpression("attribute_not_exists(jobId)")
                 .build());
+    }
+
+    /** Create a DONE job immediately (used for ad-hoc /search). */
+    public void putAdhocDone(String jobId, String owner,
+            int total, int high, int medium, int low,
+            String summaryText) {
+        String now = Instant.now().toString();
+        Map<String, AttributeValue> item = new HashMap<>();
+        item.put("jobId", AttributeValue.builder().s(jobId).build());
+        item.put("owner", AttributeValue.builder().s(owner).build());
+        item.put("status", AttributeValue.builder().s(JobStatus.DONE.name()).build());
+        item.put("createdAt", AttributeValue.builder().s(now).build());
+        item.put("updatedAt", AttributeValue.builder().s(now).build());
+        item.put("gsi1pk", AttributeValue.builder().s("OWNER#" + owner).build());
+        item.put("gsi1sk", AttributeValue.builder().s(now).build());
+        item.put("total", AttributeValue.builder().n(Integer.toString(total)).build());
+        item.put("high", AttributeValue.builder().n(Integer.toString(high)).build());
+        item.put("medium", AttributeValue.builder().n(Integer.toString(medium)).build());
+        item.put("low", AttributeValue.builder().n(Integer.toString(low)).build());
+        if (summaryText != null && !summaryText.isBlank()) {
+            item.put("summary", AttributeValue.builder().s(summaryText).build());
+        }
+        ddb.putItem(PutItemRequest.builder().tableName(table).item(item).build());
     }
 
     public void updateStatus(String jobId, JobStatus status, String error, Map<String, Integer> summary) {
@@ -89,10 +110,7 @@ public class JobsRepo {
     }
 
     public Optional<JobItem> get(String jobId) {
-        var resp = ddb.getItem(GetItemRequest.builder()
-                .tableName(table)
-                .key(key(jobId))
-                .build());
+        var resp = ddb.getItem(GetItemRequest.builder().tableName(table).key(key(jobId)).build());
         if (!resp.hasItem())
             return Optional.empty();
         return Optional.of(from(resp.item()));
@@ -100,27 +118,23 @@ public class JobsRepo {
 
     /** Recent jobs for a specific owner (fast via GSI, scan fallback otherwise). */
     public List<JobItem> recentFor(String owner, int limit) {
-        // Try the GSI first
         try {
             var q = QueryRequest.builder()
                     .tableName(table)
-                    .indexName("gsi1") // GSI with PK=gsi1pk, SK=gsi1sk
+                    .indexName("gsi1")
                     .keyConditionExpression("gsi1pk = :p")
-                    .expressionAttributeValues(Map.of(
-                            ":p", AttributeValue.builder().s("OWNER#" + owner).build()))
-                    .scanIndexForward(false) // newest first
+                    .expressionAttributeValues(Map.of(":p", AttributeValue.builder().s("OWNER#" + owner).build()))
+                    .scanIndexForward(false)
                     .limit(limit)
                     .build();
             var resp = ddb.query(q);
             return resp.items().stream().map(JobsRepo::from).collect(Collectors.toList());
         } catch (ResourceNotFoundException noIndex) {
-            // Fallback: scan + filter (OK for demo/small data)
             var resp = ddb.scan(ScanRequest.builder().tableName(table).build());
             return resp.items().stream()
                     .map(JobsRepo::from)
                     .filter(j -> owner.equalsIgnoreCase(j.owner))
-                    .sorted(Comparator.comparing(
-                            (JobItem j) -> j.updatedAt == null ? "" : j.updatedAt).reversed())
+                    .sorted(Comparator.comparing((JobItem j) -> j.updatedAt == null ? "" : j.updatedAt).reversed())
                     .limit(limit)
                     .collect(Collectors.toList());
         }
@@ -139,6 +153,7 @@ public class JobsRepo {
         j.high = n(m, "high");
         j.medium = n(m, "medium");
         j.low = n(m, "low");
+        j.summary = s(m, "summary"); // <-- NEW
         return j;
     }
 
